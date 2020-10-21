@@ -1,4 +1,4 @@
-# LIFF v2 workshop demo
+# LINE webhook demo
 
 This is a sample for webhook demo.
 
