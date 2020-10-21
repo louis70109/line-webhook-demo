@@ -1,15 +1,54 @@
 # LIFF v2 workshop demo
 
-This is a sample for LIFF workshop
+This is a sample for webhook demo.
 
 ## Deploy
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/cichien/liff-workshop-demo)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/louis70109/line-webhook-demo)
 
-## DEMO 1 - LIFF MEME
+## LINE account
 
-<img width="1161" src="https://user-images.githubusercontent.com/3030051/95953021-ca93d280-0e2b-11eb-9873-3711030e4816.png">
+- Got A LINE Bot API devloper account
+  Make sure you already registered, if you need use LINE Bot.
 
-## DEMO 2 - LIFF Campaign Invite
-<img width="1236" src="https://user-images.githubusercontent.com/3030051/95952929-a1734200-0e2b-11eb-994e-9850359e622c.png">
+- Go to LINE Developer Console
+  - Close auto-reply setting on "Messaging API" Tab.
+  - Setup your basic account information. Here is some info you will need to know.
+    - Callback URL: `https://{NGROK_URL}/v1/webhooks/line`
+    - Verify your webhook.
+    - Enable bot join group button.
+- You will get following info, need fill back to `.env` file.
+  - Channel Secret
+  - Channel Access Token (You need to issue one here)
 
+## Modify environment variables
+
+When you deploy success, please copy LINE Bot channel `access token` and `secret` to environment variable:
+
+```
+CHANNEL_ACCESS_TOKEN
+CHANNEL_SECRET
+```
+
+## Migrate LINE Bot webhook url
+
+Use following command:
+
+```bash
+ curl -X PUT "https://api.line.me/v2/bot/channel/webhook/endpoint" -H "Content-Type: application/json" -H "Authorization: Bearer TOKEN" -d '{"endpoint": "https://ENDPOINT_URL/v1/webhooks/line"}'
+```
+
+In this case, you need to change `TOKEN` ➡️ your LINE Bot `access_token` and `ENDPOINT_URL` ➡️ `Heroku URL`
+
+Then, you can change `v1` to `v2`, and you would see your Bot just echo `Hello World` 😆
+
+Version detail:
+
+- v1: echo bot
+- v2: just echo "Hello World"
+
+Enjoy it!
+
+## License
+
+MIT

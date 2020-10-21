@@ -1,32 +1,43 @@
 require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
 const express = require('express');
-const https = require('https');
 const app = express();
+const line = require('@line/bot-sdk');
+
 const port = process.env.PORT || 5000;
-const myLiffId = process.env.MY_LIFF_ID;
-const redirectUri = process.env.REDIRECT_URI;
 
-app.use(express.static('public'));
+const config = {
+  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+  channelSecret: process.env.CHANNEL_SECRET,
+};
 
-app.get('/send-id', function(req, res) {
-    res.json({id: myLiffId, redirectUri });
+app.post('/v1/webhooks/line', line.middleware(config), (req, res) => {
+  Promise.all(req.body.events.map(handleEvent)).then((result) =>
+    res.json(result)
+  );
 });
 
-if (process.env.NODE_ENV === 'development') {
-    const devCert = fs.readFileSync(
-        path.resolve(__dirname, 'cert/localhost.pem')
-    );
-    const devKey = fs.readFileSync(
-        path.resolve(__dirname, 'cert/localhost-key.pem')
-    );
-    const server = https.createServer({
-        key: devKey,
-        cert: devCert
-    }, app);
-    server.listen(8000, function() {
-        console.log(`https listening on port 8000!`);
-    });
+app.post('/v2/webhooks/line', line.middleware(config), (req, res) => {
+  Promise.all(req.body.events.map(wrongHandleEvent)).then((result) =>
+    res.json(result)
+  );
+});
+
+const client = new line.Client(config);
+function handleEvent(event) {
+  if (event.type !== 'message' || event.message.type !== 'text') {
+    return Promise.resolve(null);
+  }
+
+  return client.replyMessage(event.replyToken, {
+    type: 'text',
+    text: event.message.text,
+  });
+}
+
+function wrongHandleEvent(event) {
+  return client.replyMessage(event.replyToken, {
+    type: 'text',
+    text: 'Hello World',
+  });
 }
 app.listen(port, () => console.log(`http listening on port ${port}!`));
