@@ -32,7 +32,7 @@ CHANNEL_SECRET
 
 ## Migrate LINE Bot webhook url
 
-Use following command:
+Use the following command to change `endpoint URL`:
 
 ```bash
  curl -X PUT "https://api.line.me/v2/bot/channel/webhook/endpoint" -H "Content-Type: application/json" -H "Authorization: Bearer TOKEN" -d '{"endpoint": "https://ENDPOINT_URL/v1/webhooks/line"}'
